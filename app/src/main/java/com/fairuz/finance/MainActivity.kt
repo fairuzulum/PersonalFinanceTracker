@@ -1,20 +1,39 @@
 package com.fairuz.finance
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.fairuz.finance.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Set Toolbar
+        setSupportActionBar(binding.toolbar)
+
+        setupListeners()
+        updateUI() // Panggil fungsi untuk update UI awal
+    }
+
+    private fun setupListeners() {
+        binding.fabAddTransaction.setOnClickListener {
+            // Untuk sementara, kita hanya tampilkan Toast.
+            // Di langkah selanjutnya, ini akan membuka halaman baru.
+            Toast.makeText(this, "Tombol Tambah Transaksi Ditekan", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun updateUI() {
+        // Untuk sementara, kita isi dengan data dummy.
+        // Nantinya data ini akan berasal dari Firestore.
+        binding.tvTotalBalance.text = "Rp 0"
+        binding.tvTotalIncome.text = "Rp 0"
+        binding.tvTotalExpense.text = "Rp 0"
     }
 }
