@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.fairuz.finance.databinding.ActivityMainBinding
+import android.content.Intent
+import com.fairuz.finance.presentation.AddTransactionActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,9 +25,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.fabAddTransaction.setOnClickListener {
-            // Untuk sementara, kita hanya tampilkan Toast.
-            // Di langkah selanjutnya, ini akan membuka halaman baru.
-            Toast.makeText(this, "Tombol Tambah Transaksi Ditekan", Toast.LENGTH_SHORT).show()
+            // Ubah dari Toast menjadi Intent untuk membuka Activity baru
+            val intent = Intent(this, AddTransactionActivity::class.java)
+            startActivity(intent)
         }
     }
 
