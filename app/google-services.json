@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "597254922302",
+    "project_id": "personalfinancetracker-db704",
+    "storage_bucket": "personalfinancetracker-db704.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597254922302:android:bf8aec1da8af5a86b9716f",
+        "android_client_info": {
+          "package_name": "com.fairuz.finance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhaS5idO8rrNjxS46mc4WMQle7lOy3VbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
