@@ -2,6 +2,8 @@ package com.fairuz.finance
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -10,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fairuz.finance.databinding.ActivityMainBinding
 import com.fairuz.finance.presentation.AddTransactionActivity
+import com.fairuz.finance.presentation.category.CategoryActivity
 import com.fairuz.finance.presentation.dashboard.MainUiState
 import com.fairuz.finance.presentation.dashboard.MainViewModel
 import com.fairuz.finance.presentation.dashboard.TransactionAdapter
@@ -33,6 +36,21 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         setupListeners()
         observeViewModel()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_manage_categories -> {
+                startActivity(Intent(this, CategoryActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupRecyclerView() {

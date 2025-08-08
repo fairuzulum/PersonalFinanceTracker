@@ -14,6 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PersonalFinanceTracker">
         <activity
+            android:name=".presentation.category.CategoryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PersonalFinanceTracker" />
+        <activity
             android:name=".presentation.AddTransactionActivity"
             android:exported="false" />
         <activity

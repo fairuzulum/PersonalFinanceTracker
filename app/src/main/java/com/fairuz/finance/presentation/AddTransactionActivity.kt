@@ -5,17 +5,22 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.fairuz.finance.R
 import com.fairuz.finance.databinding.ActivityAddTransactionBinding
 import com.fairuz.finance.domain.model.Transaction
 import com.fairuz.finance.domain.model.TransactionType
 import com.fairuz.finance.presentation.add.AddTransactionState
 import com.fairuz.finance.presentation.add.AddTransactionViewModel
+import com.fairuz.finance.presentation.category.CategoryState
+import com.fairuz.finance.presentation.category.CategoryViewModel
+import kotlinx.coroutines.launch
 
 class AddTransactionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddTransactionBinding
     private val viewModel: AddTransactionViewModel by viewModels()
+    private val categoryViewModel: CategoryViewModel by viewModels()
 
     private var selectedType: TransactionType? = null
 
@@ -26,9 +31,9 @@ class AddTransactionActivity : AppCompatActivity() {
 
         setupToolbar()
         setupTypeToggle()
-        setupCategorySpinner()
         setupSaveButton()
         observeViewModel()
+        observeCategoryViewModel()
     }
 
     private fun setupToolbar() {
@@ -38,9 +43,9 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun setupTypeToggle() {
-        // Set Pengeluaran sebagai default
         binding.toggleType.check(R.id.btnExpense)
         selectedType = TransactionType.EXPENSE
+        categoryViewModel.getCategories(selectedType!!.name)
 
         binding.toggleType.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) {
@@ -49,13 +54,14 @@ class AddTransactionActivity : AppCompatActivity() {
                     R.id.btnExpense -> TransactionType.EXPENSE
                     else -> null
                 }
+                selectedType?.let {
+                    categoryViewModel.getCategories(it.name)
+                }
             }
         }
     }
 
-    private fun setupCategorySpinner() {
-        // Daftar kategori bisa diperluas atau diambil dari database nantinya
-        val categories = listOf("Makanan", "Transportasi", "Gaji", "Tagihan", "Hiburan", "Lainnya")
+    private fun setupCategorySpinner(categories: List<String>) {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categories)
         binding.actCategory.setAdapter(adapter)
     }
@@ -66,7 +72,6 @@ class AddTransactionActivity : AppCompatActivity() {
             val description = binding.etDescription.text.toString()
             val category = binding.actCategory.text.toString()
 
-            // Validasi input
             if (selectedType == null || amount == null || description.isBlank() || category.isBlank()) {
                 Toast.makeText(this, "Harap isi semua kolom", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -74,7 +79,7 @@ class AddTransactionActivity : AppCompatActivity() {
 
             val transaction = Transaction(
                 description = description,
-                amount = if (selectedType == TransactionType.INCOME) amount else -amount, // Pengeluaran jadi negatif
+                amount = if (selectedType == TransactionType.INCOME) amount else -amount,
                 type = selectedType!!,
                 category = category
             )
@@ -86,18 +91,33 @@ class AddTransactionActivity : AppCompatActivity() {
         viewModel.addTransactionState.observe(this) { state ->
             when (state) {
                 is AddTransactionState.Loading -> {
-                    // Bisa tambahkan ProgressBar di sini
                     binding.btnSave.isEnabled = false
                     binding.btnSave.text = "Menyimpan..."
                 }
                 is AddTransactionState.Success -> {
                     Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
-                    finish() // Tutup activity jika berhasil
+                    finish()
                 }
                 is AddTransactionState.Error -> {
                     Toast.makeText(this, "Error: ${state.message}", Toast.LENGTH_LONG).show()
                     binding.btnSave.isEnabled = true
                     binding.btnSave.text = "Simpan Transaksi"
+                }
+            }
+        }
+    }
+
+    private fun observeCategoryViewModel() {
+        lifecycleScope.launch {
+            categoryViewModel.categoryState.collect { state ->
+                when (state) {
+                    is CategoryState.Success -> {
+                        val categoryNames = state.categories.map { it.name }
+                        setupCategorySpinner(categoryNames)
+                    }
+                    else -> {
+                        // Handle loading and error states if needed
+                    }
                 }
             }
         }
